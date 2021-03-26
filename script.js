@@ -46,6 +46,9 @@ class Contacts {
     }
 }
 
+let contactsData = [];
+let date = new Date(Date.now() + 864000000);
+date = date.toUTCString();
 class ContactsApp extends Contacts {
     constructor() {
         super()
@@ -101,35 +104,69 @@ class ContactsApp extends Contacts {
         document.body.insertAdjacentHTML('afterbegin', `
             <form id="addContact">
                 <label> Name </label>
-                <input type="text" required>
+                <input type="text" name="name" required>
                 <label> Email </label>
-                <input type="text">
+                <input type="text" name="email">
                 <label> Address </label>
-                <input type="text">
+                <input type="text" name="address">
                 <label> Phone </label>
-                <input type="text" required>
+                <input type="text" name="tel" required>
                 <button> Submit </button>
             </form>
         `)
         document.getElementById('addContact').addEventListener('submit', (event) => {
             this.addUser(event); 
             this.drawUsers()
+            this.contactAdd()
+            localStorage.setItem('contactsData', JSON.stringify(contactsData))
+            
+            //document.cookie = 'storageExpiration=10days; expires=' + date
             document.querySelectorAll('form input')[0].value = ''
             document.querySelectorAll('form input')[1].value = ''
             document.querySelectorAll('form input')[2].value = ''
             document.querySelectorAll('form input')[3].value = ''
+            
         })
     }
 
     get storage(){
-        //localStorage.getItem()
+        console.log(localStorage.getItem('contactsData'))
+        return localStorage.getItem('contactsData')
     }
 
+    
     set storage(data) {
-
+        //let contactsData = [];
     }
+        
+    contactAdd() {
+            let inputName = document.querySelector('#addContact input[name="name"]').value;
+            let inputEmail = document.querySelector('#addContact input[name="email"]').value;
+            let inputAddress = document.querySelector('#addContact input[name="address"]').value;
+            let inputPhone = document.querySelector('#addContact input[name="tel"]').value;
+        
+        if(inputName.length == 0 || inputName == ' ' || inputEmail.length == 0 || inputEmail == ' ' ||
+        inputAddress.length == 0 || inputAddress == ' ' ||
+        inputPhone.length == 0 || inputPhone == ' ') return;
+
+        let contact = {
+            name: inputName,
+            email: inputEmail,
+            address: inputAddress,
+            phone: inputPhone
+        }
+
+        contactsData.push(contact)
+        //localStorage.setItem('contactsData', JSON.stringify(contactsData))
+    }
+
+        
+    
 }
+
 
 const contactsBook = new ContactsApp()
 contactsBook.init()
-//contactsBook.storage = localStorage.setItem('user1_name', document.querySelectorAll('section div > span')[0].textContent)
+//contactsBook.storage = localStorage.setItem('contactsData', JSON.stringify(contactsData))
+//('user1_name', document.querySelectorAll('section div > span')[0].textContent)
+//contactsBook.storageSet()
