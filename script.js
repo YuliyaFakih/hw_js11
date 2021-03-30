@@ -47,11 +47,13 @@ class Contacts {
 }
 
 let contactsData = [];
-let date = new Date(Date.now() + 864000000);
-date = date.toUTCString();
+//let date = new Date(Date.now() + 864000000);
+//date = date.toUTCString();
 class ContactsApp extends Contacts {
-    constructor() {
-        super()
+    constructor(data) {
+        super(data)
+        this.data = []
+        
     }
 
     drawEditForm(id) {
@@ -119,12 +121,18 @@ class ContactsApp extends Contacts {
             this.drawUsers()
             this.contactAdd()
             localStorage.setItem('contactsData', JSON.stringify(contactsData))
-            
-            //document.cookie = 'storageExpiration=10days; expires=' + date
+            let date = new Date(Date.now() + 874800000);
+            date = date.toUTCString();
+            document.cookie = 'storageExpiration=10days; expires=' + date
             document.querySelectorAll('form input')[0].value = ''
             document.querySelectorAll('form input')[1].value = ''
             document.querySelectorAll('form input')[2].value = ''
             document.querySelectorAll('form input')[3].value = ''
+            setTimeout(() => {
+                localStorage.clear(); 
+              }, 874800000); 
+
+            if(localStorage.length == 0) this.getData()
             
         })
     }
@@ -160,6 +168,21 @@ class ContactsApp extends Contacts {
         //localStorage.setItem('contactsData', JSON.stringify(contactsData))
     }
 
+    getData() {
+        const getUsersList = async function () {
+            let url = 'https://jsonplaceholder.typicode.com/users'
+            await fetch(url).then(function(response) {
+                return response.json()
+            }).then(function(list) {
+                console.log(list)
+                data.push(list)                         //data is undefined
+                localStorage.setItem('usersList', JSON.stringify(list))
+                
+            })
+        }()
+        
+    }
+
         
     
 }
@@ -170,3 +193,5 @@ contactsBook.init()
 //contactsBook.storage = localStorage.setItem('contactsData', JSON.stringify(contactsData))
 //('user1_name', document.querySelectorAll('section div > span')[0].textContent)
 //contactsBook.storageSet()
+
+
