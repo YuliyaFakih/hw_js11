@@ -52,8 +52,7 @@ let contactsData = [];
 class ContactsApp extends Contacts {
     constructor(data) {
         super(data)
-        this.data = []
-        
+        this.data = []        
     }
 
     drawEditForm(id) {
@@ -74,7 +73,6 @@ class ContactsApp extends Contacts {
        document.getElementById('editUser').addEventListener('submit', (event) => {this.editUser(event, id); this.drawUsers()})
         // this.editUser(element.id, this.drawUsers)
     }
-
     drawUsers() {
         document.body.querySelector('section') && document.body.querySelector('section').remove()
         const dataContainer = document.createElement('section')
@@ -116,10 +114,12 @@ class ContactsApp extends Contacts {
                 <button> Submit </button>
             </form>
         `)
+        if(localStorage.getItem('contactsData') == null) this.getData()
         document.getElementById('addContact').addEventListener('submit', (event) => {
             this.addUser(event); 
             this.drawUsers()
             this.contactAdd()
+            if(localStorage.getItem('usersList')) localStorage.removeItem('usersList')          //после того, как список 10 юзеров из fake api удалится из локалсторидж, введённые в форме контакты там запишутся, но список 10 юзеров всё равно останется на section
             localStorage.setItem('contactsData', JSON.stringify(contactsData))
             let date = new Date(Date.now() + 874800000);
             date = date.toUTCString();
@@ -132,21 +132,16 @@ class ContactsApp extends Contacts {
                 localStorage.clear(); 
               }, 874800000); 
 
-            if(localStorage.length == 0) this.getData()
             
         })
     }
-
     get storage(){
         console.log(localStorage.getItem('contactsData'))
         return localStorage.getItem('contactsData')
-    }
-
-    
+    }    
     set storage(data) {
         //let contactsData = [];
-    }
-        
+    }        
     contactAdd() {
             let inputName = document.querySelector('#addContact input[name="name"]').value;
             let inputEmail = document.querySelector('#addContact input[name="email"]').value;
@@ -167,20 +162,21 @@ class ContactsApp extends Contacts {
         contactsData.push(contact)
         //localStorage.setItem('contactsData', JSON.stringify(contactsData))
     }
-
     getData() {
+        self=this
         const getUsersList = async function () {
             let url = 'https://jsonplaceholder.typicode.com/users'
+            
             await fetch(url).then(function(response) {
                 return response.json()
             }).then(function(list) {
                 console.log(list)
-                data.push(list)                         //data is undefined
+                
+                self.data = list                       
                 localStorage.setItem('usersList', JSON.stringify(list))
                 
             })
-        }()
-        
+        }()        
     }
 
         
@@ -193,5 +189,4 @@ contactsBook.init()
 //contactsBook.storage = localStorage.setItem('contactsData', JSON.stringify(contactsData))
 //('user1_name', document.querySelectorAll('section div > span')[0].textContent)
 //contactsBook.storageSet()
-
 
